@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,6 +28,13 @@ public class TestCase {
 
     @Column(name = "testcase_description")
     private String testcaseDescription;
+
+    private LocalDateTime dateOfCreated;
+
+    @PrePersist
+    private void init() {
+        dateOfCreated = LocalDateTime.now();
+    }
 
     @ManyToOne
     @JoinColumn(name = "project_id")

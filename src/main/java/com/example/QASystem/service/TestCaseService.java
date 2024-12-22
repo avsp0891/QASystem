@@ -1,10 +1,11 @@
 package com.example.QASystem.service;
 
 
+import com.example.QASystem.exceptions.ProjectNotFoundException;
+import com.example.QASystem.exceptions.TestCaseNotFoundException;
 import com.example.QASystem.model.Project;
 import com.example.QASystem.model.Step;
 import com.example.QASystem.model.TestCase;
-import com.example.QASystem.model.dtos.ProjectDto;
 import com.example.QASystem.model.dtos.TestCaseDto;
 import com.example.QASystem.repositories.ProjectRepository;
 import com.example.QASystem.repositories.TestCaseRepository;
@@ -31,24 +32,49 @@ public class TestCaseService {
 
     public TestCaseDto getById(Integer id) {
         log.info("Получение проекта по id");
-        TestCase testCase = repository.findById(id).orElseThrow(() -> new RuntimeException("Тест-кейс с id='" + id + "' отсутствует"));
+        TestCase testCase = repository.findById(id).orElseThrow(() -> new TestCaseNotFoundException(id));
         return TestCaseDto.getDto(testCase);
+    }
+
+    public List<TestCaseDto> getAllByProjectId(Integer projectId) {
+        log.info("Получение всех тест-кейсов проекта с id - '" + projectId + "'");
+        projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
+        return TestCaseDto.getListDto(repository.getAllByProjectId(projectId));
     }
 
     public TestCaseDto create(Integer projectId, TestCase testCase) {
         log.info("Создание тест-кейса");
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Проект с id='" + projectId + "' отсутствует"));
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
         testCase.setProject(project);
-        for (Step s: testCase.getSteps()){
+        for (Step s : testCase.getSteps()) {
             s.setTestCase(testCase);
         }
         TestCase testCaseCreated = repository.save(testCase);
         return TestCaseDto.getDto(testCaseCreated);
     }
 
+    public TestCaseDto edit(Integer projectId, Integer testCaseId, TestCase newTestCase) {
+        log.info("Редактирование тест-кейса с id='" + testCaseId + "'");
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
+        TestCase testCase = repository.findById(testCaseId).orElseThrow(() -> new TestCaseNotFoundException(testCaseId));
+        if (!testCase.getProject().getId().equals(project.getId())) {
+            throw new RuntimeException("id проекта - ' " + project.getId() + "' не соответствует id тест-кейса - ' " + testCase.getProject().getId() + "'");
+        }
+        testCase.getSteps().clear();
+        testCase.setTestcaseName(newTestCase.getTestcaseName());
+        testCase.setTestcaseDescription(newTestCase.getTestcaseDescription());
+
+        for (Step s : newTestCase.getSteps()) {
+            s.setTestCase(testCase);
+            testCase.getSteps().add(s);
+        }
+        TestCase testCaseEdited = repository.save(testCase);
+        return TestCaseDto.getDto(testCaseEdited);
+    }
+
     public TestCaseDto delete(Integer id) {
         log.info("Удаление тест-кейса с id='" + id + "'");
-        TestCase testCase = repository.findById(id).orElseThrow(() -> new RuntimeException("Тест-кейс с id='" + id + "' отсутствует"));
+        TestCase testCase = repository.findById(id).orElseThrow(() -> new TestCaseNotFoundException(id));
         repository.deleteById(Math.toIntExact(testCase.getId()));
         return TestCaseDto.getDto(testCase);
     }

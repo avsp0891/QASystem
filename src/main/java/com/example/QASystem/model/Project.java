@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,6 +28,13 @@ public class Project {
 
     @Column(name = "project_description")
     private String projectDescription;
+
+    private LocalDateTime dateOfCreated;
+
+    @PrePersist
+    private void init() {
+        dateOfCreated = LocalDateTime.now();
+    }
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TestCase> testCases;
