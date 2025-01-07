@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,23 +32,31 @@ public class TestCaseService {
     }
 
     public TestCaseDto getById(Integer id) {
-        log.info("Получение проекта по id");
+        log.info("Получение тест-кейса по id");
         TestCase testCase = repository.findById(id).orElseThrow(() -> new TestCaseNotFoundException(id));
+        testCase.getSteps().sort(Comparator.comparingLong(Step::getNumber));
         return TestCaseDto.getDto(testCase);
     }
 
     public List<TestCaseDto> getAllByProjectId(Integer projectId) {
         log.info("Получение всех тест-кейсов проекта с id - '" + projectId + "'");
         projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
-        return TestCaseDto.getListDto(repository.getAllByProjectId(projectId));
+        List<TestCase> testCases = repository.getAllByProjectId(projectId);
+        for (TestCase t: testCases){
+            t.getSteps().sort(Comparator.comparingLong(Step::getNumber));
+        }
+        return TestCaseDto.getListDto(testCases);
     }
 
     public TestCaseDto create(Integer projectId, TestCase testCase) {
         log.info("Создание тест-кейса");
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ProjectNotFoundException(projectId));
         testCase.setProject(project);
+        Long num = 1L;
         for (Step s : testCase.getSteps()) {
             s.setTestCase(testCase);
+            s.setNumber(num);
+            num++;
         }
         TestCase testCaseCreated = repository.save(testCase);
         return TestCaseDto.getDto(testCaseCreated);
@@ -63,10 +72,12 @@ public class TestCaseService {
         testCase.getSteps().clear();
         testCase.setTestcaseName(newTestCase.getTestcaseName());
         testCase.setTestcaseDescription(newTestCase.getTestcaseDescription());
-
+        Long num = 1L;
         for (Step s : newTestCase.getSteps()) {
             s.setTestCase(testCase);
             testCase.getSteps().add(s);
+            s.setNumber(num);
+            num++;
         }
         TestCase testCaseEdited = repository.save(testCase);
         return TestCaseDto.getDto(testCaseEdited);
