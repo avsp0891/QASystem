@@ -1,7 +1,5 @@
 package com.example.QASystem.model;
 
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,20 +13,23 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "projects")
-public class Project {
+@Entity(name = "check_list")
+public class CheckList {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "project_name")
-    private String projectName;
+    @Column(name = "checklist_name")
+    private String checkListName;
 
-    @Column(name = "project_description")
-    private String projectDescription;
+    @Column(name = "checklist_description")
+    private String checkListDescription;
 
+    @Column(name = "testcase_id")
+    private Long testCaseId;
     private LocalDateTime dateOfCreated;
 
     @PrePersist
@@ -36,13 +37,12 @@ public class Project {
         dateOfCreated = LocalDateTime.now();
     }
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TestCase> testCases;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CheckList> checkLists;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-
-
+    @OneToMany(mappedBy = "checkList", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Item> items;
 
 }
