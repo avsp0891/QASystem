@@ -2,7 +2,7 @@ package com.example.QASystem.exceptions;
 
 public class TestCaseNotFoundException extends RuntimeException {
 
-    public TestCaseNotFoundException(Integer id) {
+    public TestCaseNotFoundException(Long id) {
         super("Тест-кейс с id='" + id + "' отсутствует");
     }
 }

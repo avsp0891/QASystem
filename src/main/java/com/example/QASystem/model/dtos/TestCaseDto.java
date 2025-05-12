@@ -1,17 +1,11 @@
 package com.example.QASystem.model.dtos;
 
 
-import com.example.QASystem.model.Project;
-import com.example.QASystem.model.Step;
 import com.example.QASystem.model.TestCase;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +20,7 @@ public class TestCaseDto {
     private List<StepDto> steps;
     private LocalDateTime dateOfCreated;
 
-    public static TestCaseDto getDto(TestCase t){
+    public static TestCaseDto getDto(TestCase t) {
         TestCaseDto dto = new TestCaseDto();
         dto.setId(t.getId());
         dto.setTestcaseName(t.getTestcaseName());
@@ -37,7 +31,7 @@ public class TestCaseDto {
         return dto;
     }
 
-    public static List<TestCaseDto> getListDto(List<TestCase> testCases){
+    public static List<TestCaseDto> getListDto(List<TestCase> testCases) {
         return testCases.stream().map(TestCaseDto::getDto).collect(Collectors.toList());
     }
 

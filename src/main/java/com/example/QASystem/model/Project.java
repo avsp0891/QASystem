@@ -1,7 +1,6 @@
 package com.example.QASystem.model;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,20 +28,19 @@ public class Project {
     @Column(name = "project_description")
     private String projectDescription;
 
+    @Column(name = "project_status")
+    private ProjectStatus projectStatus;
+
     private LocalDateTime dateOfCreated;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TestCase> testCases;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CheckList> checkLists;
 
     @PrePersist
     private void init() {
         dateOfCreated = LocalDateTime.now();
     }
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TestCase> testCases;
-
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CheckList> checkLists;
-
-
 
 
 }

@@ -1,7 +1,6 @@
 package com.example.QASystem.model;
 
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,19 +29,20 @@ public class TestCase {
     private String testcaseDescription;
 
     private LocalDateTime dateOfCreated;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
+    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Step> steps;
 
     @PrePersist
     private void init() {
         dateOfCreated = LocalDateTime.now();
     }
 
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+//    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<Item> items;
 
-    @OneToMany(mappedBy = "testCase", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Step> steps;
-
-    //предусловия, постусловия, вложения, комментарии, версия, дата создания, приоритет, статус
+    // TODO: 22.04.2025  постусловия, вложения, комментарии, версия, дата создания, приоритет, статус
 
 }

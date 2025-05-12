@@ -27,22 +27,16 @@ public class CheckList {
 
     @Column(name = "checklist_description")
     private String checkListDescription;
-
-    @Column(name = "testcase_id")
-    private Long testCaseId;
     private LocalDateTime dateOfCreated;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
+    @OneToMany(mappedBy = "checkList", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Item> items;
 
     @PrePersist
     private void init() {
         dateOfCreated = LocalDateTime.now();
     }
-
-
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
-
-    @OneToMany(mappedBy = "checkList", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Item> items;
 
 }
