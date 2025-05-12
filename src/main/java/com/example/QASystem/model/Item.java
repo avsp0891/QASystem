@@ -22,6 +22,9 @@ public class Item {
 
     private String item;
 
+    private Long testCaseId;
+
+
     @ManyToOne
     @JoinColumn(name = "checklist_id")
     private CheckList checkList;

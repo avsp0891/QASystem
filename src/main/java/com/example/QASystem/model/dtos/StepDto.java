@@ -1,11 +1,8 @@
 package com.example.QASystem.model.dtos;
 
 import com.example.QASystem.model.Step;
-import com.example.QASystem.model.TestCase;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
@@ -18,7 +15,7 @@ public class StepDto {
     private String step;
     private String resultStep;
 
-    public static StepDto getDto(Step s){
+    public static StepDto getDto(Step s) {
         return new StepDto(
                 s.getId(),
                 s.getNumber(),

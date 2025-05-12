@@ -1,9 +1,6 @@
 package com.example.QASystem.model.dtos;
 
 import com.example.QASystem.model.CheckList;
-import com.example.QASystem.model.Item;
-import com.example.QASystem.model.TestCase;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,7 +20,7 @@ public class CheckListDto {
     private LocalDateTime dateOfCreated;
     private List<ItemDto> items;
 
-    public static CheckListDto getDto(CheckList c){
+    public static CheckListDto getDto(CheckList c) {
         CheckListDto dto = new CheckListDto();
         dto.setId(c.getId());
         dto.setCheckListName(c.getCheckListName());
@@ -34,7 +31,7 @@ public class CheckListDto {
         return dto;
     }
 
-    public static List<CheckListDto> getListDto(List<CheckList> checkLists){
+    public static List<CheckListDto> getListDto(List<CheckList> checkLists) {
         return checkLists.stream().map(CheckListDto::getDto).collect(Collectors.toList());
     }
 }
