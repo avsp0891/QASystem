@@ -95,12 +95,15 @@ public class CheckListService {
         checkList.setCheckListDescription(request.getCheckListDescription());
         Long num = 1L;
         for (ItemRequest i : request.getItems()) {
-            TestCase testCase = testCaseRepository.findById(i.getTestCaseId()).orElseThrow(() -> new TestCaseNotFoundException(i.getTestCaseId()));
             Item item = new Item();
+            if (i.getTestCaseId() != null){
+                TestCase testCase = testCaseRepository.findById(i.getTestCaseId()).orElseThrow(() -> new TestCaseNotFoundException(i.getTestCaseId()));
+                item.setTestCaseId(testCase.getId());
+            }
             item.setNumber(num);
             item.setItem(i.getItem());
-            item.setTestCaseId(testCase.getId());
             item.setCheckList(checkList);
+            checkList.getItems().add(item);
             num++;
         }
         CheckList checkListEdited = repository.save(checkList);
